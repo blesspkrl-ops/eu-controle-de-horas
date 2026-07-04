@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Serviço & Saldo</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --danger: #f43f5e;
+            --danger-hover: #e11d48;
+            --success: #34d399;
+            --border: #334155;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 30px 20px; 
+            color: var(--text-main); 
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            border: 1px solid var(--border);
+        }
+
+        .tabs { 
+            display: flex; 
+            gap: 10px;
+            border-bottom: 2px solid var(--border); 
+            margin-bottom: 25px; 
+        }
+
+        .tab-btn { 
+            padding: 12px 24px; 
+            border: none; 
+            background: none; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+            transition: all 0.2s ease;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .tab-btn.active { 
+            color: var(--primary); 
+            border-bottom: 3px solid var(--primary); 
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        h2 { font-size: 22px; margin-top: 0; margin-bottom: 20px; color: var(--text-main); }
+        h3 { font-size: 18px; margin-top: 30px; color: var(--primary); }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .form-group { 
+            flex: 1;
+            min-width: 180px;
+        }
+
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 14px;
+            color: var(--text-muted); 
+        }
+
+        input { 
+            width: 100%; 
+            padding: 10px 12px; 
+            background-color: var(--bg-color);
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            color: var(--text-main);
+            font-size: 15px;
+            transition: border 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        button { 
+            background-color: var(--primary); 
+            color: #0f172a; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: bold; 
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+
+        .btn-delete {
+            background-color: transparent;
+            color: var(--danger);
+            padding: 5px 10px;
+            font-size: 13px;
+            border: 1px solid var(--danger);
+            border-radius: 4px;
+        }
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .saldo-box { 
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 25px; 
+            font-size: 18px; 
+            border-left: 5px solid var(--danger);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saldo-valor {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--danger);
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid var(--border);
+        }
+
+        th { 
+            background-color: rgba(0, 0, 0, 0.3); 
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('carga-horaria')">⏱️ Carga Horária</button>
+        <button class="tab-btn" onclick="switchTab('salario-saldo')">💰 Salário & Saldo</button>
+    </div>
+
+    <div id="carga-horaria" class="tab-content active">
+        <h2>Lançar Horas de Serviço</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Data de Trabalho:</label>
+                <input type="date" id="data">
+            </div>
+            <div class="form-group">
+                <label>Horas Trabalhadas:</label>
+                <input type="number" id="horas" step="0.1" placeholder="Ex: 8 ou 5.5">
+            </div>
+            <div class="form-group">
+                <label>Valor por Hora (R$):</label>
+                <input type="number" id="valorHora" step="0.01" value="15.00">
+            </div>
+        </div>
+        <div class="btn-group">
+            <button onclick="lancarHoras()">➕ Lançar Horas</button>
+            <button class="btn-danger" onclick="fecharMes()">🔒 Fechar Mês / Enviar para Saldo</button>
+        </div>
+
+        <h3>Histórico do Período Atual</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Horas</th>
+                    <th>Valor/Hora</th>
+                    <th>Total</th>
+                    <th style="width: 80px; text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaHoras"></tbody>
+        </table>
+    </div>
+
+    <div id="salario-saldo" class="tab-content">
+        <h2>Controle de Saldo Devedor</h2>
+        <div class="saldo-box">
+            <span>A Empresa te deve:</span>
+            <span id="saldoTotal" class="saldo-valor">R$ 0,00</span>
+        </div>
+
+        <div class="form-row" style="align-items: flex-end;">
+            <div class="form-group" style="max-width: 300px;">
+                <label>Registrar Pagamento Recebido (R$):</label>
+                <input type="number" id="valorPago" step="0.01" placeholder="Quanto você recebeu">
+            </div>
+            <button onclick="registrarPagamento()" style="height: 42px;">💸 Confirmar Recebimento</button>
+        </div>
+
+        <h3>Extrato de Movimentações</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th style="width: 80px; text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaSaldo"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
